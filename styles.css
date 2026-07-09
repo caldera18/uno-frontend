@@ -74,6 +74,13 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 
 .primary:not(:disabled):hover { filter: brightness(1.1); }
 
+#status {
+  min-height: 20px;
+  margin: 12px 0 0;
+  font-size: .82rem;
+  opacity: .65;
+}
+
 #waitingBox { margin-top: 28px; }
 
 #waitingBox h3 {

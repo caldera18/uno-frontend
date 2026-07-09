@@ -5,7 +5,10 @@ const WS_URL =
   location.hostname === "localhost" ||
   location.hostname === "127.0.0.1"
     ? "ws://localhost:3000"
-    : "wss://TU-APP.onrender.com";
+    : "wss://uno-backend-3lop.onrender.com";
+
+const IS_REMOTE = WS_URL.startsWith("wss:");
+const WAKE_URL = WS_URL.replace(/^wss:/, "https:");
 
 // El servidor habla español; los archivos de assets/ están en inglés.
 const COLOR_CLASS = { Rojo: "rojo", Amarillo: "amarillo", Verde: "verde", Azul: "azul" };
@@ -36,11 +39,36 @@ let socket = null;
 let state = null;
 let pendingWildIndex = null;   // carta esperando elección de color
 let popupOpen = false;         // hay una penalización sin aceptar
+let connected = false;
 
 /* ---------------- Conexión ---------------- */
 
-function connect() {
+const setStatus = text => { $("status").textContent = text; };
+
+// El plan gratuito de Render duerme el servicio, y un upgrade de WebSocket no lo
+// despierta: responde 404 y corta. Solo una petición HTTP normal lo levanta.
+// La respuesta no nos interesa (no-cors la vuelve opaca), sí que el pedido llegue.
+async function wakeBackend() {
+  setStatus("Despertando el servidor, puede tardar hasta un minuto…");
+  try {
+    await fetch(WAKE_URL, { mode: "no-cors", cache: "no-store" });
+  } catch {
+    // Si falla igual intentamos: quizá ya estaba despierto.
+  }
+}
+
+async function connect() {
+  $("btnJoin").disabled = true;
+  if (IS_REMOTE) await wakeBackend();
+
+  setStatus("Conectando…");
   socket = new WebSocket(WS_URL);
+
+  socket.onopen = () => {
+    connected = true;
+    setStatus("");
+    $("btnJoin").disabled = false;
+  };
 
   socket.onmessage = event => {
     const { type, data } = JSON.parse(event.data);
@@ -52,7 +80,14 @@ function connect() {
     else if (type === "gameOver")  showGameOver(data);
   };
 
-  socket.onclose = () => showGameOver("Se perdió la conexión con el servidor.");
+  socket.onclose = () => {
+    if (!connected) {
+      setStatus("No se pudo conectar. Reintentando…");
+      setTimeout(connect, 3000);
+      return;
+    }
+    showGameOver("Se perdió la conexión con el servidor.");
+  };
 }
 
 const send = (type, data) => socket.send(JSON.stringify({ type, data }));
