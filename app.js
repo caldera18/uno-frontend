@@ -7,14 +7,28 @@ const WS_URL =
     ? "ws://localhost:3000"
     : "wss://TU-APP.onrender.com";
 
+// El servidor habla español; los archivos de assets/ están en inglés.
 const COLOR_CLASS = { Rojo: "rojo", Amarillo: "amarillo", Verde: "verde", Azul: "azul" };
-const GLYPH = { Bloqueo: "\u{1F6AB}", CambioSentido: "\u{1F504}", CambiaColor: "\u{1F308}" };
+const COLOR_FILE  = { Rojo: "Red", Amarillo: "Yellow", Verde: "Green", Azul: "Blue" };
+const VALUE_FILE = {
+  "0": "Zero", "1": "One",   "2": "Two",   "3": "Three", "4": "Four",
+  "5": "Five", "6": "Six",   "7": "Seven", "8": "Eight", "9": "Nine",
+  "Bloqueo": "SkipTurn", "CambioSentido": "Reverse", "+2": "DrawTwo"
+};
+const WILD_FILE = { "CambiaColor": "Wild_ChangeColor", "+4": "Wild_DrawFour" };
 
 // Se detecta por value: al jugarse, el servidor le reescribe el color al elegido,
 // así que "Comodín" solo aparece mientras la carta está en la mano.
 const isWild = card => card.value === "CambiaColor" || card.value === "+4";
 const colorClass = card => COLOR_CLASS[card.color] || "wild";
-const glyph = card => GLYPH[card.value] || card.value;
+
+// Los comodines no tienen archivo por color: hay uno solo para los cuatro.
+const cardImage = card =>
+  isWild(card)
+    ? `assets/${WILD_FILE[card.value]}.png`
+    : `assets/${COLOR_FILE[card.color]}_${VALUE_FILE[card.value]}.png`;
+
+const cardAlt = card => isWild(card) ? card.value : `${card.color} ${card.value}`;
 
 const $ = id => document.getElementById(id);
 
@@ -102,9 +116,12 @@ function render() {
 
   $("log").textContent = state.log || "";
 
+  // Un comodín siempre usa la misma imagen, así que el color activo que eligió
+  // el jugador solo se ve por el halo que le pone la clase de color.
   const top = $("topCard");
   top.className = "card " + colorClass(state.topCard);
-  top.textContent = glyph(state.topCard);
+  top.src = cardImage(state.topCard);
+  top.alt = cardAlt(state.topCard);
 
   $("drawPile").classList.toggle("enabled", state.isMyTurn);
 
@@ -121,9 +138,10 @@ function renderHand() {
   hand.classList.toggle("playable", state.isMyTurn);
 
   state.hand.forEach((card, index) => {
-    const el = document.createElement("div");
-    el.className = "card small " + colorClass(card);
-    el.textContent = glyph(card);
+    const el = document.createElement("img");
+    el.className = "card";
+    el.src = cardImage(card);
+    el.alt = cardAlt(card);
     el.onclick = () => playCard(index);
     hand.appendChild(el);
   });
