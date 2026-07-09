@@ -1,0 +1,280 @@
+:root {
+  --rojo: #d7263d;
+  --amarillo: #f0c419;
+  --verde: #2a9d3f;
+  --azul: #1c72c4;
+  --wild: #1a1a1a;
+  --felt: #14532d;
+  --felt-dark: #0b2e1a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at 50% 35%, var(--felt), var(--felt-dark));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen { display: none; width: 100%; }
+.screen.active { display: block; }
+
+/* ---------- Lobby ---------- */
+
+#lobby {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+}
+
+#lobby h1 {
+  font-size: 3rem;
+  margin: 0 0 4px;
+  letter-spacing: -2px;
+}
+
+#lobby p.sub { opacity: .7; margin: 0 0 32px; }
+
+#nameInput {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 2px solid rgba(255,255,255,.25);
+  border-radius: 10px;
+  background: rgba(0,0,0,.3);
+  color: #fff;
+}
+
+#nameInput:focus { outline: none; border-color: var(--amarillo); }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.primary {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  font-size: 1rem;
+  background: var(--amarillo);
+  color: #1a1a1a;
+}
+
+.primary:not(:disabled):hover { filter: brightness(1.1); }
+
+#waitingBox { margin-top: 28px; }
+
+#waitingBox h3 {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: .6;
+}
+
+#waitingList { list-style: none; padding: 0; margin: 0; }
+
+#waitingList li {
+  background: rgba(0,0,0,.28);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+}
+
+#waitingList li.empty { opacity: .35; font-style: italic; }
+
+/* ---------- Mesa ---------- */
+
+#game {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 100vh;
+}
+
+#turnBanner {
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.3);
+  font-weight: 700;
+  transition: background .2s;
+}
+
+#turnBanner.mine {
+  background: var(--amarillo);
+  color: #1a1a1a;
+}
+
+#turnBanner .dir {
+  display: block;
+  font-weight: 400;
+  font-size: .8rem;
+  opacity: .75;
+}
+
+#log {
+  min-height: 42px;
+  font-size: .85rem;
+  line-height: 1.4;
+  text-align: center;
+  opacity: .8;
+  padding: 0 8px;
+}
+
+#table {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px 0;
+}
+
+/* ---------- Cartas ---------- */
+
+.card {
+  width: 78px;
+  height: 116px;
+  border-radius: 10px;
+  border: 4px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 3px rgba(0,0,0,.45);
+  box-shadow: 0 6px 14px rgba(0,0,0,.4);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.card.small { font-size: 1.35rem; }
+
+.card.rojo     { background: var(--rojo); }
+.card.amarillo { background: var(--amarillo); color: #1a1a1a; text-shadow: none; }
+.card.verde    { background: var(--verde); }
+.card.azul     { background: var(--azul); }
+
+.card.wild {
+  background:
+    conic-gradient(var(--rojo) 0 25%, var(--amarillo) 0 50%,
+                   var(--verde) 0 75%, var(--azul) 0);
+}
+
+.card.back {
+  background: var(--wild);
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+#drawPile { cursor: pointer; transition: transform .12s; }
+#drawPile.enabled:hover { transform: translateY(-6px); }
+#drawPile:not(.enabled) { cursor: not-allowed; opacity: .55; }
+
+.pileLabel {
+  text-align: center;
+  font-size: .7rem;
+  opacity: .6;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+/* ---------- Mano ---------- */
+
+#handWrap { margin-top: auto; }
+
+#hand {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(0,0,0,.22);
+  border-radius: 14px;
+  min-height: 148px;
+  align-items: center;
+}
+
+#hand .card { transition: transform .12s; }
+
+#hand.playable .card { cursor: pointer; }
+#hand.playable .card:hover { transform: translateY(-12px); }
+#hand:not(.playable) .card { cursor: default; opacity: .8; }
+
+/* ---------- Botonera UNO ---------- */
+
+#unoBar {
+  display: none;
+  gap: 12px;
+  justify-content: center;
+}
+
+#unoBar.show { display: flex; }
+
+#unoBar button { padding: 12px 30px; font-size: 1rem; }
+
+#btnUno   { background: var(--amarillo); color: #1a1a1a; }
+#btnCorte { background: var(--rojo); color: #fff; }
+
+/* ---------- Modales ---------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.overlay.show { display: flex; }
+
+.modal {
+  background: #1f2937;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.6);
+}
+
+.modal h2 { margin: 0 0 12px; }
+.modal p { margin: 0 0 22px; line-height: 1.5; opacity: .9; }
+
+#colorGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+#colorGrid button {
+  padding: 22px;
+  color: #fff;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+
+#colorGrid button:hover { filter: brightness(1.15); }
+
+.swatch-rojo     { background: var(--rojo); }
+.swatch-amarillo { background: var(--amarillo); color: #1a1a1a !important; text-shadow: none !important; }
+.swatch-verde    { background: var(--verde); }
+.swatch-azul     { background: var(--azul); }

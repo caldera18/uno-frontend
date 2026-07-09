@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNO Master</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ LOBBY ============ -->
+<section id="lobby" class="screen active">
+  <h1>UNO</h1>
+  <p class="sub">Multijugador en tiempo real &middot; 4 jugadores</p>
+
+  <input id="nameInput" type="text" placeholder="Tu nombre" maxlength="16" autocomplete="off">
+  <button id="btnJoin" class="primary">Entrar al Lobby</button>
+
+  <div id="waitingBox">
+    <h3>Jugadores en sala</h3>
+    <ul id="waitingList">
+      <li class="empty">Nadie todav&iacute;a</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ MESA ============ -->
+<section id="game" class="screen">
+  <div id="turnBanner">
+    <span id="turnText">Esperando&hellip;</span>
+    <span class="dir"></span>
+  </div>
+
+  <div id="table">
+    <div>
+      <div id="drawPile" class="card back">UNO</div>
+      <div class="pileLabel">ROBAR</div>
+    </div>
+    <div>
+      <div id="topCard" class="card"></div>
+      <div class="pileLabel">MESA</div>
+    </div>
+  </div>
+
+  <div id="log"></div>
+
+  <div id="unoBar">
+    <button id="btnUno">&iexcl;UNO!</button>
+    <button id="btnCorte">&iexcl;CORTE!</button>
+  </div>
+
+  <div id="handWrap">
+    <div id="hand"></div>
+  </div>
+</section>
+
+<!-- ============ Selector de color (comodín) ============ -->
+<div id="colorOverlay" class="overlay">
+  <div class="modal">
+    <h2>Elige un color</h2>
+    <p>Jugaste un comod&iacute;n. &iquest;A qu&eacute; color cambias?</p>
+    <div id="colorGrid">
+      <button class="swatch-rojo"     data-color="Rojo">Rojo</button>
+      <button class="swatch-amarillo" data-color="Amarillo">Amarillo</button>
+      <button class="swatch-verde"    data-color="Verde">Verde</button>
+      <button class="swatch-azul"     data-color="Azul">Azul</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Popup de penalización ============ -->
+<div id="popupOverlay" class="overlay">
+  <div class="modal">
+    <h2>&iexcl;Atenci&oacute;n!</h2>
+    <p id="popupText"></p>
+    <button id="btnResolve" class="primary">Aceptar</button>
+  </div>
+</div>
+
+<!-- ============ Fin de partida ============ -->
+<div id="overOverlay" class="overlay">
+  <div class="modal">
+    <h2>Fin de la partida</h2>
+    <p id="overText"></p>
+    <button id="btnRestart" class="primary">Volver al lobby</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
